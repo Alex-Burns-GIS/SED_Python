@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
 # ==============================================================================
-# Implementation of Subset0 commands for Slippy, a subset of the Unix/Linux 
-# tool Sed. For Subset0, Slippy faciliates quitting, printing, deleting, and 
-# substitution functions with respect to the standard input stream. 
+# A subset of the Unix/Linux tool Sed, Slippy provides quitting, printing, 
+# deleting, and substitution functions with respect to the standard input stream. 
 #
-# The following commands are implemented in Subset0: 'q', 'p', 'd', and 's', 
+# The following commands are implemented in Slippy: 'q', 'p', 'd', and 's', 
 # with accompanying implementation for the -n command line option and g command
 # modifier option. 
 #
 # Written by: Alexander Burns <z5118440>
 # Date: 11-08-2022
-# For COMP2041/9044 Assignment 2
+# For UNSW COMP2041/9044 Assignment 2
 # ==============================================================================
 
 import os

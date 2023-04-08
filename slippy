@@ -1,0 +1,315 @@
+#!/usr/bin/env python3
+
+# ==============================================================================
+# Implementation of Subset0 commands for Slippy, a subset of the Unix/Linux 
+# tool Sed. For Subset0, Slippy faciliates quitting, printing, deleting, and 
+# substitution functions with respect to the standard input stream. 
+#
+# The following commands are implemented in Subset0: 'q', 'p', 'd', and 's', 
+# with accompanying implementation for the -n command line option and g command
+# modifier option. 
+#
+# Written by: Alexander Burns <z5118440>
+# Date: 11-08-2022
+# For COMP2041/9044 Assignment 2
+# ==============================================================================
+
+import os
+import sys
+import re
+
+inputArgs = sys.argv
+
+# Implement error checking for usage errors. This includes the following errors: 
+# not enough arguments, too many possible arguments, and non-usable arguments.
+
+if len(inputArgs) == 1:
+    print("usage: slippy [-i] [-n] [-f <script-file> | <sed-command>] [<files>...]")
+    sys.exit(1)
+
+if len(inputArgs) > 3:
+    print("usage: slippy [-i] [-n] [-f <script-file> | <sed-command>] [<files>...]")
+    sys.exit(1)
+
+if len(inputArgs) == 2:
+    if (sys.argv[1])[0] == '-':
+        print("usage: slippy [-i] [-n] [-f <script-file> | <sed-command>] [<files>...]")
+        sys.exit(1)
+
+if len(inputArgs) == 3:
+    if sys.argv[1] != '-n':
+        print("usage: slippy [-i] [-n] [-f <script-file> | <sed-command>] [<files>...]")
+        sys.exit(1)
+    
+    if (sys.argv[2])[0] == '-': 
+        print("usage: slippy [-i] [-n] [-f <script-file> | <sed-command>] [<files>...]")
+        sys.exit(1)
+        
+# Define the first argument as slippy_command, a variable which will be 
+# manipulated to extract slippy command options, line addresses, and 
+# regular expressions (regex).
+ 
+slippy_command = sys.argv[1]
+
+############################################################################### 
+# Implement '-n' command line option for the following Slippy commands: 'q',  
+# 'p', and 'd'. When '-n' is active, lines from standard input are not printed 
+# by default.                                                                    
+###############################################################################
+if slippy_command == '-n':
+    
+
+    command = sys.argv[2]
+    line_address = command[:-1]
+    trim_regex = line_address.replace("/","")
+    slippy_option = command[-1]
+
+# Facilitate the Slippy 'q' command. Slippy will exit the stream when a line 
+# address or regex match is detected in standard input. For a integer line 
+# address, the line_counter variable tracks the number of lines by incrementing
+# +1 for each read line of standard input. For a regex match, the target 
+# line_address is detected using the re.search function on each read line. 
+
+    if slippy_option == 'q':
+
+        if line_address.isdigit():
+            if int(line_address) == 0:
+                print("slippy: command line: invalid command")
+                sys.exit(1)
+
+            line_counter = 0
+            for line in sys.stdin:
+                line_counter += 1
+                if line_counter == int(line_address):
+                    sys.exit(0)
+        else:
+            for line in sys.stdin:
+                match = re.search(trim_regex, line)
+                if match:
+                    sys.exit(0)
+                    
+# Facilitate the Slippy 'p' command. Slippy will print the line with a 
+# matched address or regex pattern. 
+
+    elif slippy_option == 'p':
+        if line_address.isdigit():
+            if int(line_address) == 0:
+                print("slippy: command line: invalid command")
+                sys.exit(1)
+        
+            line_counter = 0
+            for line in sys.stdin:
+                line_counter += 1
+                if line_counter == int(line_address):
+                    print(line, end = "")
+        
+        else:
+            for line in sys.stdin:
+                match = re.search(trim_regex, line)
+                if match:
+                    print(line, end = "")
+                    
+# Facilitate the Slippy 'd' command. Slippy will delete the line with a 
+# matched address or regex pattern. 
+                    
+    elif slippy_option == 'd':
+        if line_address.isdigit():
+            if int(line_address) == 0:
+                print("slippy: command line: invalid command")
+                sys.exit(1)
+        
+            line_counter = 0
+            for line in sys.stdin:
+                line_counter += 1
+                if line_counter == int(line_address):
+                    pass
+                else:
+                    pass
+        else:
+            for line in sys.stdin:
+                match = re.search(trim_regex, line)
+                if match:
+                    pass
+                else:
+                    pass
+    sys.exit(0) 
+   
+################################################################################
+# Implement the following Slippy commands: 'q', 'p', 's', and 'd' without the 
+# -n command line modifier.                                                            
+################################################################################
+
+if slippy_command != '-n':
+    
+    line_address = slippy_command[:-1]
+    trim_regex = line_address.replace("/","")
+    slippy_option = slippy_command[-1]
+
+# Facilitate the Slippy 'q' command. Slippy will exit the stream when a line 
+# address or regex match is detected in standard input.
+
+    if slippy_option == 'q':
+
+        if line_address.isdigit():
+            if int(line_address) == 0:
+                print("slippy: command line: invalid command")
+                sys.exit(1)
+
+            line_counter = 0
+            for line in sys.stdin:
+                print(line, end = "")
+                line_counter += 1
+                if line_counter == int(line_address):
+                    sys.exit(0)
+        else:
+            for line in sys.stdin:
+                match = re.search(trim_regex, line)
+                print(line, end = "")
+                if match:
+                    sys.exit(0)    
+                    
+# Facilitate the Slippy 'p' command. Slippy will print the line with a 
+# matched address or regex pattern. 
+
+    elif slippy_option == 'p':
+        if line_address.isdigit():
+            if int(line_address) == 0:
+                print("slippy: command line: invalid command")
+                sys.exit(1)
+        
+            line_counter = 0
+            for line in sys.stdin:
+                print(line, end = "")
+                line_counter += 1
+                if line_counter == int(line_address):
+                    print(line, end = "")
+               
+        else:
+            for line in sys.stdin:
+                match = re.search(trim_regex, line)
+                print(line, end = "")
+                if match:
+                    print(line, end = "")
+        sys.exit(0)     
+                   
+# Facilitate the Slippy 'd' command. Slippy will delete the line with a 
+# matched address or regex pattern. 
+                    
+    elif slippy_option == 'd':
+        if line_address.isdigit():
+            if int(line_address) == 0:
+                print("slippy: command line: invalid command")
+                sys.exit(1)
+        
+            line_counter = 0
+            for line in sys.stdin:
+                line_counter += 1
+                if line_counter == int(line_address):
+                    pass
+                else:
+                    print(line, end = "")
+        else:
+            for line in sys.stdin:
+                match = re.search(trim_regex, line)
+                if match:
+                    pass
+                else:
+                    print(line, end = "")
+        sys.exit(0)
+        
+# Facilitate various functions of the slippy substitute command. For matching 
+# lines, Slippy will replace the specified regex with the specified substitution on  
+
+# Facilitate substitute command with no given address. Includes error checking
+# for correct implementation of /g modifier.         
+
+    elif slippy_command[0] == 's':
+        
+        if slippy_command[-1] == 'g':
+            if slippy_command[-2] != '/':
+                print("slippy: command line: invalid command")
+                exit(1) 
+                
+        regex = slippy_command.split("/")[1]
+        repl = slippy_command.split("/")[2]
+        
+        for line in sys.stdin:
+            if slippy_command[-1] == 'g':
+                result = re.sub(regex, repl, line)
+                print(result, end = "")
+            else:
+                result = re.sub(regex, repl, line, 1)
+                print(result, end = "")
+        sys.exit(0)
+  
+# Facilitate substitute command if given a specific regex address.
+# Slice slippy command to extract the regex for line address and 
+# substitution target (i.e. the 'match').      
+                
+    elif slippy_command[0] == '/' and slippy_command.split("/")[2] == 's':
+                
+        regex_address = slippy_command.split("/")[1]
+        match = slippy_command.split("/")[3]
+       
+        if slippy_command[-1] == 'g':
+            repl = slippy_command.split("/")[4:-1]
+        else:
+            repl = slippy_command.split("/")[4:]
+        
+        if slippy_command[-1] == 'g':
+            if slippy_command[-2] != '/':
+                print("slippy: command line: invalid command")
+                exit(1)
+        
+# If neccesary, convert sliced substituting element from list to string. 
+# If the line matches the regex for line address, apply extracted substitution. 
+    
+        repl = "".join(repl)
+                        
+        for line in sys.stdin:
+            if re.search(regex_address, line):
+                if slippy_command[-1] == 'g':
+                    result = re.sub(match, repl, line)
+                    print(result, end = "")
+                else:
+                    result = re.sub(match, repl, line, 1)
+                    print(result, end = "")
+            else:
+                print(line, end = "") 
+        sys.exit(0)      
+        
+# Facilitate substitute command if given a line number address
+# Loop through each character of the slippy command until 's' is reached. 
+# This 'line_address_count' enables the correct slicing of the given line
+# address in the slippy_command. 
+
+    elif slippy_command[0] != 's':
+        line_address_count = 0
+        for char in range(0, len(slippy_command)):
+            if slippy_command[char] == 's':
+                break
+            else:
+                line_address_count += 1
+
+        if len(slippy_command) > 1:
+            
+            line_address = slippy_command[:line_address_count]
+            regex = slippy_command.split("/")[1]
+            repl = slippy_command.split("/")[2]
+
+# Repeat previously outlined procedure to match correct line address and test if /g 
+# modifier should be implemented. 
+                
+            line_counter = 0
+            for line in sys.stdin:
+                line_counter += 1
+                if line_counter == int(line_address):
+                    if slippy_command[-1] == 'g':
+                        result = re.sub(regex, repl, line)
+                        print(result, end = "")
+                    else:
+                        result = re.sub(regex, repl, line, 1)
+                        print(result, end = "")
+                else:
+                    print(line, end = "")
+ 
